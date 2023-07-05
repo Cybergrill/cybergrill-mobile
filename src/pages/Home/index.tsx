@@ -5,7 +5,6 @@ import {
 } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
-  Actionsheet,
   Box,
   Button,
   FlatList,
@@ -13,10 +12,10 @@ import {
   Icon,
   IconButton,
   Input,
-  Text,
   useDisclose,
 } from 'native-base';
-import React, { useState } from 'react';
+import React from 'react';
+import AddToCartModal from '../../components/AddToCartModal';
 import CardMenu from '../../components/CardMenu';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -25,9 +24,8 @@ interface CategoryProps {
   name: string;
   icon: string;
 }
-const Home: React.FC<HomeProps> = () => {
+const Home: React.FC<HomeProps> = ({ navigation }) => {
   const { isOpen, onOpen, onClose } = useDisclose();
-  const [count, setCount] = useState(1);
   const categories: CategoryProps[] = [
     {
       name: 'Burger',
@@ -60,11 +58,12 @@ const Home: React.FC<HomeProps> = () => {
         />
         <IconButton
           flex={1}
-          variant="ghost"
+          variant="outline"
           _icon={{
             as: Feather,
             name: 'shopping-cart',
           }}
+          onPress={() => navigation.navigate('Cart')}
         />
       </HStack>
       <FlatList
@@ -94,66 +93,7 @@ const Home: React.FC<HomeProps> = () => {
         data={categories}
         renderItem={() => <CardMenu onPress={onOpen} />}
       />
-      <Actionsheet isOpen={isOpen} onClose={onClose}>
-        <Actionsheet.Content p={4}>
-          <HStack mb={4} w={'100%'} justifyContent={'space-between'}>
-            <Text
-              fontSize="24"
-              color="gray.500"
-              _dark={{
-                color: 'gray.300',
-              }}
-            >
-              X-Tudo:
-            </Text>
-            <Box>
-              <Button.Group
-                isAttached
-                colorScheme="primary"
-                mx={{
-                  base: 'auto',
-                  md: 0,
-                }}
-                size="sm"
-              >
-                <Button
-                  variant="outline"
-                  onPress={() => {
-                    if (count === 1) {
-                      setCount(1);
-                    } else {
-                      setCount(count - 1);
-                    }
-                  }}
-                >
-                  -
-                </Button>
-                <Button disabled>{count}</Button>
-                <Button variant="outline" onPress={() => setCount(count + 1)}>
-                  +
-                </Button>
-              </Button.Group>
-            </Box>
-          </HStack>
-          <Button
-            width={'100%'}
-            size={'lg'}
-            startIcon={
-              <Icon
-                as={FontAwesome}
-                name="shopping-cart"
-                size="md"
-                color={'white'}
-              />
-            }
-            colorScheme="primary"
-            _text={{ color: 'white' }}
-            onPress={onClose}
-          >
-            Adicionar ao carrinho
-          </Button>
-        </Actionsheet.Content>
-      </Actionsheet>
+      <AddToCartModal isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 };

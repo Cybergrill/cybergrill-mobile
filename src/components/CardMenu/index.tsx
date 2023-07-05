@@ -16,6 +16,7 @@ const CardMenu: React.FC<CardMenuProps> = ({ onPress }) => {
         borderWidth="3"
         p="5"
         mt={2}
+        bg={'white'}
       >
         <Center>
           <Burger width={80} height={80} />
