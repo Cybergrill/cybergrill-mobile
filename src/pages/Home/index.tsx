@@ -12,11 +12,14 @@ import {
   Icon,
   IconButton,
   Input,
+  Stack,
+  Text,
   useDisclose,
 } from 'native-base';
-import React from 'react';
+import React, { useState } from 'react';
 import AddToCartModal from '../../components/AddToCartModal';
 import CardMenu from '../../components/CardMenu';
+import { useCheckout } from '../../contexts/Checkout';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -26,6 +29,10 @@ interface CategoryProps {
 }
 const Home: React.FC<HomeProps> = ({ navigation }) => {
   const { isOpen, onOpen, onClose } = useDisclose();
+  const { order } = useCheckout();
+
+  const [itemSelected, setItemSelected] = useState<Order>();
+
   const categories: CategoryProps[] = [
     {
       name: 'Burger',
@@ -41,8 +48,41 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
     },
   ];
 
+  const menu = [
+    {
+      id: 1,
+      name: 'X-Bacon',
+      price: 19.9,
+    },
+    {
+      id: 2,
+      name: 'X-Frango',
+      price: 19.9,
+    },
+    {
+      id: 3,
+      name: 'X-Salada',
+      price: 19.9,
+    },
+    {
+      id: 4,
+      name: 'X-Bacon',
+      price: 19.9,
+    },
+    {
+      id: 5,
+      name: 'X-Calabresa',
+      price: 19.9,
+    },
+    {
+      id: 6,
+      name: 'X-Tudo',
+      price: 19.9,
+    },
+  ];
+
   return (
-    <Box px="16px" safeArea>
+    <Box p="16px" safeArea>
       <HStack mb={10} space={3}>
         <Input
           w={'85%'}
@@ -56,44 +96,67 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
             />
           }
         />
-        <IconButton
-          flex={1}
-          variant="outline"
-          _icon={{
-            as: Feather,
-            name: 'shopping-cart',
-          }}
-          onPress={() => navigation.navigate('Cart')}
-        />
+        <Box position={'relative'}>
+          <IconButton
+            flex={1}
+            variant="outline"
+            _icon={{
+              as: Feather,
+              name: 'shopping-cart',
+            }}
+            onPress={() => navigation.navigate('Cart')}
+          />
+          {order.length > 0 && (
+            <Box
+              position={'absolute'}
+              background={'primary.600'}
+              top={-10}
+              right={-10}
+              p={1}
+              rounded={'full'}
+            >
+              <Text fontSize={'xs'} color={'amber.500'}>
+                {order.length}
+              </Text>
+            </Box>
+          )}
+        </Box>
       </HStack>
-      <FlatList
-        data={categories}
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
-        renderItem={({ item }) => (
+      <Stack width={'100%'} direction={'row'} justifyContent={'space-between'}>
+        {categories.map((category) => (
           <Button
             variant="subtle"
             _text={{ color: 'white' }}
             leftIcon={
               <Icon
                 as={MaterialCommunityIcons}
-                name={item.icon}
+                name={category.icon}
                 size="md"
                 color={'white'}
               />
             }
           >
-            {item.name}
+            {category.name}
           </Button>
+        ))}
+      </Stack>
+
+      <FlatList
+        data={menu}
+        contentContainerStyle={{ paddingBottom: 150, paddingTop: 10 }}
+        renderItem={({ item }) => (
+          <CardMenu
+            key={item.id}
+            name={item.name}
+            price={item.price}
+            onPress={() => {
+              setItemSelected(item);
+              onOpen();
+            }}
+          />
         )}
       />
-      <FlatList
-        py={3}
-        data={categories}
-        renderItem={() => <CardMenu onPress={onOpen} />}
-      />
-      <AddToCartModal isOpen={isOpen} onClose={onClose} />
+      <AddToCartModal isOpen={isOpen} onClose={onClose} item={itemSelected} />
     </Box>
   );
 };

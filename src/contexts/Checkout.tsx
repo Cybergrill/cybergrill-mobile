@@ -1,9 +1,8 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface CheckoutContextValues {
-  firstLaunch: boolean;
-  setFirstLaunch: React.Dispatch<React.SetStateAction<boolean>>;
-  firstLaunchCheck: () => Promise<void>;
+  order: Order[];
+  setOrder: React.Dispatch<React.SetStateAction<Order[]>>;
 }
 
 const CheckoutContext = createContext<CheckoutContextValues>(
@@ -17,18 +16,13 @@ interface CheckoutProviderProps {
 export const CheckoutProvider: React.FC<CheckoutProviderProps> = ({
   children,
 }) => {
-  const [firstLaunch, setFirstLaunch] = useState(true);
-
-  const firstLaunchCheck = useCallback(async () => {
-    setFirstLaunch(true);
-  }, []);
+  const [order, setOrder] = useState<Order[]>([]);
 
   return (
     <CheckoutContext.Provider
       value={{
-        firstLaunchCheck,
-        firstLaunch,
-        setFirstLaunch,
+        order,
+        setOrder,
       }}
     >
       {children}

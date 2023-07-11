@@ -5,9 +5,11 @@ import { TouchableOpacity } from 'react-native';
 
 interface CardMenuProps {
   onPress: () => void;
+  name: string;
+  price: number;
 }
 
-const CardMenu: React.FC<CardMenuProps> = ({ onPress }) => {
+const CardMenu: React.FC<CardMenuProps> = ({ name, price, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <HStack
@@ -31,14 +33,17 @@ const CardMenu: React.FC<CardMenuProps> = ({ onPress }) => {
         >
           <Stack space={2}>
             <Heading size="lg" color={'coolGray.600'}>
-              X-tudo
+              {name}
             </Heading>
             <Text textAlign={'center'} fontWeight="400" color={'coolGray.600'}>
               150g
             </Text>
           </Stack>
           <Text fontSize="md" color={'primary.500'} fontWeight="600">
-            R$ 25,00
+            {price.toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
           </Text>
         </Stack>
       </HStack>

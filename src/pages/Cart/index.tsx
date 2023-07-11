@@ -11,32 +11,24 @@ import {
   Text,
   useDisclose,
 } from 'native-base';
-import React from 'react';
+import React, { useCallback } from 'react';
 import CartItem from '../../components/CartItem';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useCheckout } from '../../contexts/Checkout';
 
 type CartProps = NativeStackScreenProps<RootStackParamList, 'Cart'>;
 
 const Cart: React.FC<CartProps> = ({ navigation }) => {
   const { isOpen, onToggle } = useDisclose();
-  const cartData = [
-    {
-      name: 'X-Tudo',
-      price: 19.9,
+  const { order, setOrder } = useCheckout();
+
+  const removeOrderItem = useCallback(
+    (indexSelected: number) => {
+      const newOrder = order.filter((item, index) => index !== indexSelected);
+      setOrder(newOrder);
     },
-    {
-      name: 'X-Tudo',
-      price: 19.9,
-    },
-    {
-      name: 'X-Tudo',
-      price: 19.9,
-    },
-    {
-      name: 'X-Tudo',
-      price: 19.9,
-    },
-  ];
+    [order, setOrder]
+  );
 
   const renderFooter = () => {
     return (
@@ -52,7 +44,7 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
             Total:
           </Text>
           <Heading color={'black'}>
-            {cartData
+            {order
               .reduce(
                 (accumulator, currentValue) => accumulator + currentValue.price,
                 0
@@ -119,10 +111,16 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
   };
   return (
     <FlatList
-      data={cartData}
+      data={order}
       ListHeaderComponent={renderHeader}
-      renderItem={({ item }) => (
-        <CartItem name={item.name} price={item.price} />
+      renderItem={({ item, index }) => (
+        <CartItem
+          key={index}
+          onPress={() => removeOrderItem(index)}
+          name={item.name}
+          price={item.price}
+          isLast={index === order.length - 1}
+        />
       )}
       ListFooterComponent={renderFooter}
     />

@@ -1,13 +1,24 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { Actionsheet, Box, Button, HStack, Icon, Text } from 'native-base';
 import React, { useCallback, useState } from 'react';
+import { useCheckout } from '../../contexts/Checkout';
 
 interface AddToCartModalProps {
   isOpen: boolean;
   onClose: () => void;
+  item?: {
+    id: number;
+    name: string;
+    price: number;
+  };
 }
 
-const AddToCartModal: React.FC<AddToCartModalProps> = ({ isOpen, onClose }) => {
+const AddToCartModal: React.FC<AddToCartModalProps> = ({
+  isOpen,
+  onClose,
+  item,
+}) => {
+  const { setOrder } = useCheckout();
   const [count, setCount] = useState(1);
 
   const handleAddToCart = useCallback(() => setCount(count + 1), [count]);
@@ -18,6 +29,15 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({ isOpen, onClose }) => {
       setCount(count - 1);
     }
   }, [count]);
+
+  const addOrderItem = useCallback(() => {
+    for (let index = 0; index < count; index++) {
+      if (!item) {
+        return;
+      }
+      setOrder((prevState) => [...prevState, item]);
+    }
+  }, [count, item, setOrder]);
 
   return (
     <Actionsheet isOpen={isOpen} onClose={onClose}>
@@ -65,7 +85,11 @@ const AddToCartModal: React.FC<AddToCartModalProps> = ({ isOpen, onClose }) => {
           }
           colorScheme="primary"
           _text={{ color: 'white' }}
-          onPress={onClose}
+          onPress={() => {
+            addOrderItem();
+            setCount(1);
+            onClose();
+          }}
         >
           Adicionar ao carrinho
         </Button>
