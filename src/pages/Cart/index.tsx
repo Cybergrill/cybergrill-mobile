@@ -31,13 +31,19 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
     [order, setOrder]
   );
 
-  const orderString = encodeURIComponent(`"
-  olá, segue o seu pedido" -  ${order.map((item) => item.name)} "total" ${order
-    .reduce((accumulator, currentValue) => accumulator + currentValue.price, 0)
-    .toLocaleString('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    })} "obrigado pela preferência"`);
+  const orderString = encodeURIComponent(
+    `Olá, segue o seu pedido -  ${order.map(
+      (item) => item.name
+    )}. Total - ${order
+      .reduce(
+        (accumulator, currentValue) => accumulator + currentValue.price,
+        0
+      )
+      .toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      })}. Obrigado pela preferência.`
+  );
 
   const renderFooter = () => {
     return (
@@ -71,15 +77,18 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
               navigation.goBack();
             }, 2000);
             Linking.canOpenURL(
-              `https://api.whatsapp.com/send?phone=84988884444&text="${orderString}"`
+              `https://api.whatsapp.com/send?phone=5584988496845&text="${orderString}"`
             ).then((supported) => {
               if (supported) {
+                console.log(
+                  `https://api.whatsapp.com/send?phone=5584988496845&text="${orderString}"`
+                );
                 Linking.openURL(
-                  `https://api.whatsapp.com/send?phone=84988884444&text="${orderString}"`
+                  `https://api.whatsapp.com/send?phone=5584988496845&text="${orderString}"`
                 );
               } else {
                 console.log(
-                  "Don't know how to open URI: https://api.whatsapp.com/send?phone=84988884444&text=Olá"
+                  "Don't know how to open URI: https://api.whatsapp.com/send?phone=5584988496845&text=Olá"
                 );
               }
             });
