@@ -15,6 +15,7 @@ import React, { useCallback } from 'react';
 import CartItem from '../../components/CartItem';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useCheckout } from '../../contexts/Checkout';
+import { Linking } from 'react-native';
 
 type CartProps = NativeStackScreenProps<RootStackParamList, 'Cart'>;
 
@@ -29,6 +30,14 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
     },
     [order, setOrder]
   );
+
+  const orderString = encodeURIComponent(`"
+  olá, segue o seu pedido" -  ${order.map((item) => item.name)} "total" ${order
+    .reduce((accumulator, currentValue) => accumulator + currentValue.price, 0)
+    .toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    })} "obrigado pela preferência"`);
 
   const renderFooter = () => {
     return (
@@ -61,6 +70,19 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
             setTimeout(() => {
               navigation.goBack();
             }, 2000);
+            Linking.canOpenURL(
+              `https://api.whatsapp.com/send?phone=84988884444&text="${orderString}"`
+            ).then((supported) => {
+              if (supported) {
+                Linking.openURL(
+                  `https://api.whatsapp.com/send?phone=84988884444&text="${orderString}"`
+                );
+              } else {
+                console.log(
+                  "Don't know how to open URI: https://api.whatsapp.com/send?phone=84988884444&text=Olá"
+                );
+              }
+            });
           }}
         >
           Fazer pedido
@@ -119,7 +141,6 @@ const Cart: React.FC<CartProps> = ({ navigation }) => {
           onPress={() => removeOrderItem(index)}
           name={item.name}
           price={item.price}
-          isLast={index === order.length - 1}
         />
       )}
       ListFooterComponent={renderFooter}

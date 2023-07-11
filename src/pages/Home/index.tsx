@@ -127,6 +127,7 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
           <Button
             variant="subtle"
             _text={{ color: 'white' }}
+            key={category.name}
             leftIcon={
               <Icon
                 as={MaterialCommunityIcons}

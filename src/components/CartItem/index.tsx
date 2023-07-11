@@ -8,15 +8,9 @@ interface CartItemProps {
   name: string;
   price: number;
   onPress?: () => void;
-  isLast?: boolean;
 }
 
-const CartItem: React.FC<CartItemProps> = ({
-  name,
-  price,
-  onPress,
-  isLast,
-}) => {
+const CartItem: React.FC<CartItemProps> = ({ name, price, onPress }) => {
   return (
     <>
       <Stack
@@ -49,21 +43,6 @@ const CartItem: React.FC<CartItemProps> = ({
           </Text>
         </Stack>
       </Stack>
-      {/*  {isLast && (
-        <IconButton
-          size={8}
-          variant="solid"
-          rounded={'full'}
-          _icon={{
-            as: Feather,
-            name: 'x',
-          }}
-          position={'absolute'}
-          top={2}
-          right={2}
-          onPress={onPress}
-        />
-      )} */}
       <IconButton
         size={8}
         variant="solid"
